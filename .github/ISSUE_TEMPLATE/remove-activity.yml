@@ -1,0 +1,61 @@
+name: Remove an Activity
+description: Request that an existing extracurricular activity be removed from the website.
+title: "Remove Activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Remove an Extracurricular Activity
+        Use this form to request that an activity be removed from the Mergington High School activities website.
+        Removing an activity will also delete the current participant list, so please confirm this is intentional.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The exact name of the activity to remove, as it currently appears on the website.
+      placeholder: e.g., Drama Club
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Reason for Removal
+      description: Select the reason that best describes why this activity is being removed.
+      options:
+        - Activity has ended permanently
+        - Activity is on a long-term pause (semester or more)
+        - Activity was entered by mistake
+        - Activity has been merged with another activity
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason-details
+    attributes:
+      label: Additional Details
+      description: Provide any extra context. If you selected "Other" above, please explain here.
+      placeholder: e.g., The club advisor has left the school and we have no replacement at this time.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting.
+      options:
+        - label: I understand that removing this activity will also remove the current participant list and this cannot be undone.
+          required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will you know this request has been completed successfully?
+      value: |
+        - [ ] The activity no longer appears in the activities list on the website.
+        - [ ] Students can no longer sign up for this activity.
+    validations:
+      required: true

@@ -1,0 +1,91 @@
+name: Add New Activity
+description: Request a new extracurricular activity to be added to the Mergington High School activities list.
+title: "Add New Activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Add a New Extracurricular Activity
+        Use this form to request a new activity on the Mergington High School activities website.
+        Fill in all required fields so the request can be completed without any follow-up questions.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The full name of the new activity as it should appear on the website.
+      placeholder: e.g., Photography Club
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Activity Description
+      description: A short description of what students will do in this activity (1–3 sentences).
+      placeholder: e.g., Learn the basics of photography, explore composition techniques, and showcase your work in the school gallery.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: days
+    attributes:
+      label: Meeting Days
+      description: Select all days when this activity meets.
+      options:
+        - label: Monday
+        - label: Tuesday
+        - label: Wednesday
+        - label: Thursday
+        - label: Friday
+        - label: Saturday
+        - label: Sunday
+    validations:
+      required: true
+
+  - type: input
+    id: start-time
+    attributes:
+      label: Start Time
+      description: The time the activity starts (use 24-hour format, e.g., 15:30 for 3:30 PM).
+      placeholder: e.g., 15:30
+    validations:
+      required: true
+
+  - type: input
+    id: end-time
+    attributes:
+      label: End Time
+      description: The time the activity ends (use 24-hour format, e.g., 17:00 for 5:00 PM).
+      placeholder: e.g., 17:00
+    validations:
+      required: true
+
+  - type: input
+    id: max-participants
+    attributes:
+      label: Maximum Number of Participants
+      description: The maximum number of students allowed in this activity at one time.
+      placeholder: e.g., 20
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will you know this request has been completed successfully? List what you expect to see.
+      value: |
+        - [ ] The new activity appears in the activities list on the website.
+        - [ ] The activity card shows the correct name, description, schedule, and participant limit.
+        - [ ] Students can sign up for the activity from the website.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Notes
+      description: Any other information that may be helpful, such as the room location, the supervising teacher, or special requirements.
+      placeholder: e.g., This activity will be held in Room 204 and supervised by Ms. Rodriguez.
