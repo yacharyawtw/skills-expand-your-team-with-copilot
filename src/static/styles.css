@@ -180,6 +180,10 @@ section h3 {
   width: 100%;
 }
 
+#activities-list.grouped {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 #activities-list.calendar-mode {
   display: block;
 }
@@ -700,6 +704,7 @@ footer {
 .category-filters,
 .day-filters,
 .time-filters,
+.group-by-filters {
 .difficulty-filters {
   display: flex;
   flex-wrap: wrap;
@@ -709,6 +714,7 @@ footer {
 .category-filter,
 .day-filter,
 .time-filter,
+.group-by-filter {
 .difficulty-filter {
   background-color: var(--background);
   border: 1px solid var(--border);
@@ -723,6 +729,7 @@ footer {
 .category-filter.active,
 .day-filter.active,
 .time-filter.active,
+.group-by-filter.active {
 .difficulty-filter.active {
   background-color: var(--primary);
   color: white;
@@ -732,12 +739,37 @@ footer {
 .category-filter:hover,
 .day-filter:hover,
 .time-filter:hover,
+.group-by-filter:hover {
 .difficulty-filter:hover {
   background-color: var(--primary-light);
   color: white;
 }
 
 .time-filters {
+  width: 100%;
+}
+
+/* Group By section styles */
+.group-section {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.group-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  border-left: 4px solid var(--primary);
+  background-color: var(--border-light);
+  border-radius: 0 4px 4px 0;
+}
+
+.group-activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
   width: 100%;
 }
 
