@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryFilters = document.querySelectorAll(".category-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
+  const groupByFilters = document.querySelectorAll(".group-by-filter");
 
   // Authentication elements
   const loginButton = document.getElementById("login-button");
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let currentGroupBy = "none";
 
   // Authentication state
   let currentUser = null;
@@ -414,6 +416,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear the activities list
     activitiesList.innerHTML = "";
 
+    // Toggle grouped layout class
+    if (currentGroupBy !== "none") {
+      activitiesList.classList.add("grouped");
+    } else {
+      activitiesList.classList.remove("grouped");
+    }
+
     // Apply client-side filtering - this handles category filter and search, plus weekend filter
     let filteredActivities = {};
 
@@ -466,14 +475,82 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Display filtered activities
-    Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
+    // Display activities, grouped or flat
+    if (currentGroupBy === "category") {
+      renderGroupedActivities(filteredActivities, (name, details) => {
+        const type = getActivityType(name, details.description);
+        return activityTypes[type] ? activityTypes[type].label : "Other";
+      });
+    } else if (currentGroupBy === "day") {
+      const dayOrder = [
+        "Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday", "Saturday", "Sunday",
+      ];
+      renderGroupedActivities(
+        filteredActivities,
+        (name, details) => {
+          if (details.schedule_details && details.schedule_details.days.length > 0) {
+            return details.schedule_details.days[0];
+          }
+          return "Other";
+        },
+        dayOrder
+      );
+    } else {
+      Object.entries(filteredActivities).forEach(([name, details]) => {
+        renderActivityCard(name, details);
+      });
+    }
+  }
+
+  // Function to render activities grouped by a key function
+  function renderGroupedActivities(activities, keyFn, groupOrder) {
+    // Build groups
+    const groups = {};
+    Object.entries(activities).forEach(([name, details]) => {
+      const key = keyFn(name, details);
+      if (!groups[key]) {
+        groups[key] = {};
+      }
+      groups[key][name] = details;
+    });
+
+    // Determine display order of group keys
+    let keys = Object.keys(groups);
+    if (groupOrder) {
+      keys = [
+        ...groupOrder.filter((k) => groups[k]),
+        ...keys.filter((k) => !groupOrder.includes(k)),
+      ];
+    } else {
+      keys.sort();
+    }
+
+    // Render each group
+    keys.forEach((key) => {
+      const section = document.createElement("div");
+      section.className = "group-section";
+
+      const header = document.createElement("h3");
+      header.className = "group-header";
+      header.textContent = key;
+      section.appendChild(header);
+
+      const grid = document.createElement("div");
+      grid.className = "group-activities";
+      section.appendChild(grid);
+
+      Object.entries(groups[key]).forEach(([name, details]) => {
+        renderActivityCard(name, details, grid);
+      });
+
+      activitiesList.appendChild(section);
     });
   }
 
   // Function to render a single activity card
-  function renderActivityCard(name, details) {
+  function renderActivityCard(name, details, container) {
+    const targetContainer = container || activitiesList;
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
 
@@ -587,7 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    activitiesList.appendChild(activityCard);
+    targetContainer.appendChild(activityCard);
   }
 
   // Event listeners for search and filter
@@ -638,6 +715,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update current time filter and fetch activities
       currentTimeRange = button.dataset.time;
       fetchActivities();
+    });
+  });
+
+  // Add event listeners for group by buttons
+  groupByFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Update active class
+      groupByFilters.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      // Update current group by and redisplay activities
+      currentGroupBy = button.dataset.groupby;
+      displayFilteredActivities();
     });
   });
 
