@@ -1,0 +1,96 @@
+name: Modify Existing Activity
+description: Request changes to the details of an activity that is already listed on the website.
+title: "Modify Activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Modify an Existing Extracurricular Activity
+        Use this form to request updates to an activity that is already on the Mergington High School activities website.
+        Describe only the fields that need to change — anything left blank will remain the same.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The exact name of the activity you want to modify, as it currently appears on the website.
+      placeholder: e.g., Chess Club
+    validations:
+      required: true
+
+  - type: input
+    id: new-name
+    attributes:
+      label: New Activity Name (optional)
+      description: Leave blank if the name should stay the same.
+      placeholder: e.g., Chess & Strategy Club
+
+  - type: textarea
+    id: new-description
+    attributes:
+      label: New Description (optional)
+      description: The updated description for this activity. Leave blank if no change is needed.
+      placeholder: e.g., Learn advanced chess strategies and compete in regional tournaments.
+
+  - type: checkboxes
+    id: new-days
+    attributes:
+      label: New Meeting Days (optional)
+      description: If the schedule days are changing, select the new days below. Leave all unchecked if no change is needed.
+      options:
+        - label: Monday
+        - label: Tuesday
+        - label: Wednesday
+        - label: Thursday
+        - label: Friday
+        - label: Saturday
+        - label: Sunday
+
+  - type: input
+    id: new-start-time
+    attributes:
+      label: New Start Time (optional)
+      description: Leave blank if the start time is not changing. Use 24-hour format (e.g., 15:30 for 3:30 PM).
+      placeholder: e.g., 15:30
+
+  - type: input
+    id: new-end-time
+    attributes:
+      label: New End Time (optional)
+      description: Leave blank if the end time is not changing. Use 24-hour format (e.g., 17:00 for 5:00 PM).
+      placeholder: e.g., 17:00
+
+  - type: input
+    id: new-max-participants
+    attributes:
+      label: New Maximum Participants (optional)
+      description: Leave blank if the participant limit is not changing.
+      placeholder: e.g., 15
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for Change
+      description: Briefly explain why this change is needed.
+      placeholder: e.g., The room we use only fits 15 students, so we need to lower the limit.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will you know this request has been completed successfully?
+      value: |
+        - [ ] The activity page on the website reflects all requested changes.
+        - [ ] The activity card displays the updated information correctly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Notes
+      description: Any other details that may help with this request.
+      placeholder: e.g., The change should take effect at the start of next trimester.
