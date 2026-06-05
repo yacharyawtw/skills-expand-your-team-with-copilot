@@ -7,9 +7,27 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Animated Git branch background -->
+    <canvas id="git-branches-canvas" aria-hidden="true"></canvas>
+
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
+      <!-- Mascots from GitHub Octodex -->
+      <div id="mascots" aria-label="School mascots">
+        <img src="https://octodex.github.com/images/Professortocat_v2.png" alt="Professor Octocat" title="Professor Octocat" />
+        <img src="https://octodex.github.com/images/codercat.jpg" alt="Coder Cat" title="Coder Cat" />
+        <img src="https://octodex.github.com/images/sportocats.png" alt="Sport Octocat" title="Sport Octocat" />
+        <img src="https://octodex.github.com/images/original.png" alt="Original Octocat" title="Original Octocat" />
+        <img src="https://octodex.github.com/images/nyantocat.gif" alt="Nyan Tocat" title="Nyan Tocat" />
+      <div id="view-controls" role="group" aria-label="View toggle">
+        <button id="card-view-button" class="view-toggle active" type="button">
+          Card View
+        </button>
+        <button id="calendar-view-button" class="view-toggle" type="button">
+          Calendar View
+        </button>
+      </div>
       <div id="user-controls">
         <div id="user-status">
           <button id="login-button" class="icon-button">
@@ -112,6 +130,21 @@
                 </button>
                 <button class="group-by-filter" data-groupby="day">
                   Day
+            <!-- Difficulty Filter -->
+            <div class="filter-container difficulty-filter-container">
+              <div class="filter-label">Filter by difficulty:</div>
+              <div class="difficulty-filters" id="difficulty-filters">
+                <button class="difficulty-filter active" data-difficulty="all">
+                  All Levels
+                </button>
+                <button class="difficulty-filter" data-difficulty="Beginner">
+                  Beginner
+                </button>
+                <button class="difficulty-filter" data-difficulty="Intermediate">
+                  Intermediate
+                </button>
+                <button class="difficulty-filter" data-difficulty="Advanced">
+                  Advanced
                 </button>
               </div>
             </div>
@@ -185,5 +218,148 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+      // Animated Git-style branch lines background
+      (function () {
+        const canvas = document.getElementById("git-branches-canvas");
+        const ctx = canvas.getContext("2d");
+
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        // A "lane" represents a horizontal rail a commit dot can travel on
+        const LANE_COUNT = 6;
+        const LANE_SPACING = 24;
+        const COMMIT_RADIUS = 4;
+        const DOT_SPEED = 0.4; // pixels per frame
+
+        // Color for the lime green scheme
+        const BRANCH_COLOR = "rgba(90, 173, 46, 0.25)";
+        const DOT_COLOR = "rgba(90, 173, 46, 0.55)";
+        const LINE_WIDTH = 2;
+
+        // Each segment: a line from (x1, y1) to (x2, y2) drawn progressively
+        // We'll build a fixed set of branch "tracks" and animate dots moving along them.
+
+        // Build some vertical branch tracks with occasional merges/branches
+        function buildTracks() {
+          const tracks = [];
+          const startX = 20;
+          for (let i = 0; i < LANE_COUNT; i++) {
+            const x = startX + i * LANE_SPACING;
+            tracks.push({ x, phase: Math.random() * 1000 });
+          }
+          return tracks;
+        }
+
+        const tracks = buildTracks();
+
+        // Dots moving along tracks, with occasional diagonal "branch" or "merge" moves
+        const dots = [];
+        const MAX_DOTS = 20;
+
+        function spawnDot() {
+          const track = tracks[Math.floor(Math.random() * tracks.length)];
+          const targetTrack =
+            tracks[Math.floor(Math.random() * tracks.length)];
+          dots.push({
+            x: track.x,
+            y: 0,
+            startX: track.x,
+            endX: targetTrack.x,
+            branchAt: Math.random() * 300 + 100, // y-position where it branches
+            branchDone: false,
+            speed: DOT_SPEED + Math.random() * 0.3,
+          });
+        }
+
+        for (let i = 0; i < 8; i++) {
+          const track = tracks[Math.floor(Math.random() * tracks.length)];
+          const targetTrack =
+            tracks[Math.floor(Math.random() * tracks.length)];
+          dots.push({
+            x: track.x,
+            y: -Math.random() * window.innerHeight,
+            startX: track.x,
+            endX: targetTrack.x,
+            branchAt: Math.random() * 300 + 100,
+            branchDone: false,
+            speed: DOT_SPEED + Math.random() * 0.3,
+          });
+        }
+
+        let frameCount = 0;
+        function animate() {
+          requestAnimationFrame(animate);
+          // Clear only the canvas area (full redraw)
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          frameCount++;
+          if (frameCount % 120 === 0 && dots.length < MAX_DOTS) {
+            spawnDot();
+          }
+
+          // Draw vertical lane lines (static grid)
+          ctx.strokeStyle = "rgba(90, 173, 46, 0.12)";
+          ctx.lineWidth = 1;
+          tracks.forEach((t) => {
+            ctx.beginPath();
+            ctx.moveTo(t.x, 0);
+            ctx.lineTo(t.x, canvas.height);
+            ctx.stroke();
+          });
+
+          // Draw and update dots
+          for (let i = dots.length - 1; i >= 0; i--) {
+            const d = dots[i];
+            d.y += d.speed;
+
+            // If dot reaches branchAt, animate toward endX
+            if (!d.branchDone && d.y >= d.branchAt) {
+              // Move horizontally toward endX
+              const dx = d.endX - d.x;
+              if (Math.abs(dx) > 1) {
+                d.x += dx * 0.08;
+              } else {
+                d.x = d.endX;
+                d.branchDone = true;
+              }
+            }
+
+            // Draw branch line from previous position
+            const prevY = d.y - d.speed;
+            const prevX = d.branchDone
+              ? d.endX
+              : !d.branchDone && prevY >= d.branchAt
+              ? d.x - (d.endX - d.x) * 0.08
+              : d.startX;
+
+            ctx.strokeStyle = BRANCH_COLOR;
+            ctx.lineWidth = LINE_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(d.x, d.y);
+            ctx.stroke();
+
+            // Draw the dot
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, COMMIT_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = DOT_COLOR;
+            ctx.fill();
+
+            // Remove dots that go off screen
+            if (d.y > canvas.height + 10) {
+              dots.splice(i, 1);
+            }
+          }
+        }
+
+        animate();
+      })();
+    </script>
   </body>
 </html>
