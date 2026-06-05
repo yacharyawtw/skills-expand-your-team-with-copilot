@@ -20,6 +20,13 @@
         <img src="https://octodex.github.com/images/sportocats.png" alt="Sport Octocat" title="Sport Octocat" />
         <img src="https://octodex.github.com/images/original.png" alt="Original Octocat" title="Original Octocat" />
         <img src="https://octodex.github.com/images/nyantocat.gif" alt="Nyan Tocat" title="Nyan Tocat" />
+      <div id="view-controls" role="group" aria-label="View toggle">
+        <button id="card-view-button" class="view-toggle active" type="button">
+          Card View
+        </button>
+        <button id="calendar-view-button" class="view-toggle" type="button">
+          Calendar View
+        </button>
       </div>
       <div id="user-controls">
         <div id="user-status">
@@ -108,6 +115,25 @@
                   After School
                 </button>
                 <button class="time-filter" data-time="weekend">Weekend</button>
+              </div>
+            </div>
+
+            <!-- Difficulty Filter -->
+            <div class="filter-container difficulty-filter-container">
+              <div class="filter-label">Filter by difficulty:</div>
+              <div class="difficulty-filters" id="difficulty-filters">
+                <button class="difficulty-filter active" data-difficulty="all">
+                  All Levels
+                </button>
+                <button class="difficulty-filter" data-difficulty="Beginner">
+                  Beginner
+                </button>
+                <button class="difficulty-filter" data-difficulty="Intermediate">
+                  Intermediate
+                </button>
+                <button class="difficulty-filter" data-difficulty="Advanced">
+                  Advanced
+                </button>
               </div>
             </div>
           </aside>

@@ -77,6 +77,34 @@ header h2 {
   font-size: 1.2rem;
 }
 
+#view-controls {
+  margin-top: 10px;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.view-toggle {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 18px;
+}
+
+.view-toggle.active {
+  background-color: #fff;
+  color: var(--primary);
+  border-color: #fff;
+}
+
+.view-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.view-toggle.active:hover {
+  background-color: #fff;
+}
+
 main {
   display: flex;
   flex-wrap: wrap;
@@ -150,6 +178,99 @@ section h3 {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 15px;
   width: 100%;
+}
+
+#activities-list.calendar-mode {
+  display: block;
+}
+
+.calendar-view {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-x: auto;
+  background-color: var(--surface);
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: 70px repeat(7, minmax(140px, 1fr));
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.calendar-time-header {
+  border-right: 1px solid var(--border);
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.8rem;
+  padding: 8px 4px;
+  border-right: 1px solid var(--border);
+}
+
+.calendar-body {
+  display: grid;
+  grid-template-columns: 70px repeat(7, minmax(140px, 1fr));
+  min-width: 1050px;
+}
+
+.calendar-time-column {
+  border-right: 1px solid var(--border);
+  position: relative;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--hour-height) - 1px),
+    var(--border-light) calc(var(--hour-height) - 1px),
+    var(--border-light) var(--hour-height)
+  );
+}
+
+.calendar-time-label {
+  position: absolute;
+  left: 8px;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.calendar-day-column {
+  border-right: 1px solid var(--border);
+  position: relative;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--hour-height) - 1px),
+    var(--border-light) calc(var(--hour-height) - 1px),
+    var(--border-light) var(--hour-height)
+  );
+}
+
+.calendar-entry {
+  position: absolute;
+  border-radius: 6px;
+  background-color: #e3f2fd;
+  border: 1px solid #90caf9;
+  color: #0d47a1;
+  padding: 4px;
+  overflow: hidden;
+  font-size: 0.72rem;
+}
+
+.calendar-entry-name {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.calendar-entry-enrollment {
+  margin-top: 3px;
+  font-size: 0.68rem;
 }
 
 .activity-card {
@@ -578,7 +699,8 @@ footer {
 
 .category-filters,
 .day-filters,
-.time-filters {
+.time-filters,
+.difficulty-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -586,7 +708,8 @@ footer {
 
 .category-filter,
 .day-filter,
-.time-filter {
+.time-filter,
+.difficulty-filter {
   background-color: var(--background);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -599,7 +722,8 @@ footer {
 
 .category-filter.active,
 .day-filter.active,
-.time-filter.active {
+.time-filter.active,
+.difficulty-filter.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary-dark);
@@ -607,7 +731,8 @@ footer {
 
 .category-filter:hover,
 .day-filter:hover,
-.time-filter:hover {
+.time-filter:hover,
+.difficulty-filter:hover {
   background-color: var(--primary-light);
   color: white;
 }
