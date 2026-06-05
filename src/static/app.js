@@ -327,6 +327,77 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  function getShareData(name, details) {
+    const shareUrl = `${window.location.origin}${window.location.pathname}#activity=${encodeURIComponent(name)}`;
+    const schedule = formatSchedule(details);
+    const shareText = `Check out ${name} at Mergington High School! ${schedule}`;
+
+    return {
+      shareUrl,
+      shareText,
+    };
+  }
+
+  async function shareActivity(platform, name, details) {
+    const { shareUrl, shareText } = getShareData(name, details);
+
+    if (platform === "native") {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `${name} - Mergington High School Activities`,
+            text: shareText,
+            url: shareUrl,
+          });
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            showMessage("Share failed. Please try again.", "error");
+          }
+        }
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+          showMessage("Activity details copied. Share it with your friends!", "success");
+        } catch (error) {
+          showMessage("Unable to copy share link. Please try again.", "error");
+        }
+      }
+      return;
+    }
+
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedText = encodeURIComponent(shareText);
+
+    if (platform === "x") {
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      return;
+    }
+
+    if (platform === "facebook") {
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      return;
+    }
+
+    if (platform === "whatsapp") {
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -510,6 +581,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (currentView === "calendar") {
+      renderCalendarView(filteredActivities);
+      return;
+    }
+
     // Display activities, grouped or flat
     if (currentGroupBy === "category") {
       renderGroupedActivities(filteredActivities, (name, details) => {
@@ -580,14 +656,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       activitiesList.appendChild(section);
-    if (currentView === "calendar") {
-      renderCalendarView(filteredActivities);
-      return;
-    }
-
-    // Display filtered activities in card view
-    Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
     });
   }
 
@@ -916,6 +984,20 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-actions" role="group" aria-label="Share ${name}">
+        <button class="share-button" data-platform="native" data-activity="${name}">
+          Share
+        </button>
+        <button class="share-button" data-platform="x" data-activity="${name}">
+          X
+        </button>
+        <button class="share-button" data-platform="facebook" data-activity="${name}">
+          Facebook
+        </button>
+        <button class="share-button" data-platform="whatsapp" data-activity="${name}">
+          WhatsApp
+        </button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -933,6 +1015,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        shareActivity(button.dataset.platform, name, details);
+      });
+    });
 
     targetContainer.appendChild(activityCard);
   }
@@ -1005,6 +1094,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update current group by and redisplay activities
       currentGroupBy = button.dataset.groupby;
+      displayFilteredActivities();
+    });
+  });
+
   // Add event listeners for difficulty filter buttons
   difficultyFilters.forEach((button) => {
     button.addEventListener("click", () => {
